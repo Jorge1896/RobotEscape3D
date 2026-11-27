@@ -43,12 +43,12 @@ public class GameManager : MonoBehaviour
         vidaAnterior = jugador.vida;
         nucleosAnteriores = jugador.nucleos;
         Actualizar();
-        MostrarMenu("ROBOT ESCAPE 3D\n\nPROTOCOLO DE EVACUACION\n\nRecupera 5 nucleos y escapa antes de 120 segundos.\n\nWASD: mover   |   Mouse: apuntar y disparar   |   ESC: pausa\n\nENTER - INICIAR MISION");
+        MostrarMenu("HELL PROTOCOL\n\nPROTOCOLO DE EVACUACION\n\nRecupera 5 nucleos y escapa antes de 120 segundos.\n\nWASD: mover   |   Mouse: apuntar y disparar   |   ESC: pausa\n\nENTER - INICIAR MISION");
     }
 
     private void MostrarMenu(string texto)
     {
-        tituloMenu.text = esperandoInicio ? "ROBOT ESCAPE 3D" : "MISIÓN EN PAUSA";
+        tituloMenu.text = esperandoInicio ? "HELL PROTOCOL" : "MISIÓN EN PAUSA";
         textoMenu.text = esperandoInicio ? "PROTOCOLO DE EVACUACIÓN\n\nRecupera 5 núcleos y alcanza la salida.\nDispones de 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESC  ·  Pausa\n\n[ ENTER ]  INICIAR MISIÓN" : "[ ESC ]  CONTINUAR\n\n[ R ]  REINICIAR";
         panelHud.SetActive(false);
         panelMenu.SetActive(true);
