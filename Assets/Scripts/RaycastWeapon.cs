@@ -14,6 +14,7 @@ public class RaycastWeapon : MonoBehaviour
 
     private void Update()
     {
+        if (Time.timeScale == 0f || (GameManager.instancia != null && !GameManager.instancia.EnJuego)) return;
         Mouse mouse = Mouse.current;
         Camera camara = Camera.main;
         if (mouse == null || camara == null || !mouse.leftButton.wasPressedThisFrame || Time.time < proximoDisparo) return;
