@@ -7,6 +7,8 @@ public class EnemyController : MonoBehaviour
     public float velocidad = 2.5f;
     public float alcance = 8f;
     public int vida = 50;
+    [Header("Comportamiento")]
+    public float multiplicadorVelocidad = 1.2f;
     private Rigidbody rb;
     private void Awake() { rb = GetComponent<Rigidbody>(); }
     private void FixedUpdate()
@@ -15,7 +17,7 @@ public class EnemyController : MonoBehaviour
         Vector3 delta = objetivo.position - transform.position;
         delta.y = 0;
         Vector3 movimiento = delta.magnitude < alcance && delta.magnitude > .55f
-            ? delta.normalized * velocidad : Vector3.zero;
+            ? delta.normalized * velocidad * multiplicadorVelocidad : Vector3.zero;
         rb.linearVelocity = new Vector3(movimiento.x, rb.linearVelocity.y, movimiento.z);
         if (movimiento.sqrMagnitude > .01f)
             rb.MoveRotation(Quaternion.LookRotation(movimiento));
