@@ -2,6 +2,9 @@
 
 Videojuego de acción y supervivencia 3D desarrollado en Unity 6.5 (6000.5.10f1), para la Evaluación Sumativa 3 de Desarrollo de Videojuegos (TILE22).
 
+## Integrante
+Jorge Manriquez
+
 ## Historia
 El reactor del sector 07 está colapsando. Una unidad de combate debe recuperar cinco núcleos de energía y alcanzar el portal de evacuación antes de que se agote el tiempo, evitando las máquinas de seguridad hostiles.
 
@@ -48,6 +51,3 @@ La escena debe incluir los recursos generados y las referencias a los archivos d
 
 ## Pruebas manuales
 Comprobar movimiento, bloqueo por muros, disparos y daño, recolección, portal bloqueado y activado, victoria, derrota por tiempo y por vida, reinicio, pausa, música, dash y baterías. Las pruebas de desarrollo fueron realizadas en el editor; verificar también una compilación de Windows antes de entregar.
-
-## Créditos
-Proyecto académico. Referencias artísticas: DOOM (2016) y DOOM Eternal; no se utilizan recursos originales de esos juegos. Portada generada con ChatGPT y banda sonora creada con Suno. Verificar los permisos de distribución de las pistas según el plan utilizado antes de publicar. Completar los nombres de ambos integrantes y sus contribuciones reales antes de entregar.
