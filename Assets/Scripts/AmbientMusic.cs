@@ -37,7 +37,6 @@ public class AmbientMusic : MonoBehaviour
     private AudioClip CrearPista()
     {
         const int tasa = 22050;
-        const float pulso = .5f;
         float[] datos = new float[tasa * 16];
         int[] raices = {45, 41, 48, 43};
         int[] terceras = {3, 4, 4, 4};
@@ -52,17 +51,14 @@ public class AmbientMusic : MonoBehaviour
             int intervalo = patron[paso % 8];
             if (intervalo == 3) intervalo = terceras[acorde];
             float f = Frecuencia(raices[acorde] + 12 + intervalo);
-            float envolvente = Mathf.Min(1f, fase / .025f) * Mathf.Exp(-fase * 9f);
+            float envolvente = Mathf.Clamp01(fase / .035f) * Mathf.Clamp01((.25f - fase) / .065f) * Mathf.Exp(-fase * 5f);
             float melodia = (Mathf.Sin(2f*Mathf.PI*f*fase) +
                 .25f*Mathf.Sin(4f*Mathf.PI*f*fase)) * envolvente * .42f;
 
-            float b = t % pulso;
+            // Bajo sostenido, sin golpes ritmicos ni reinicios cada medio segundo.
             float bajoF = Frecuencia(raices[acorde]);
-            float bajo = (Mathf.Sin(2f*Mathf.PI*bajoF*b) +
-                .45f*Mathf.Sin(4f*Mathf.PI*bajoF*b)) *
-                Mathf.Min(1f,b/.035f)*Mathf.Exp(-b*2f)*.15f;
-            
-            
+            float fundido = Mathf.Clamp01(Mathf.Min(local / .3f, (4f - local) / .3f));
+            float bajo = Mathf.Sin(2f * Mathf.PI * bajoF * local) * .07f * fundido;
             float borde = Mathf.Clamp01(Mathf.Min(t/.015f,(16f-t)/.015f));
             datos[i] = Mathf.Clamp(melodia+bajo,-.95f,.95f)*borde;
         }
