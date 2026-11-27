@@ -16,6 +16,9 @@ public class GameManager : MonoBehaviour
     private GameObject panelHud;
     private Text subtituloMenu, accionMenu;
     private GameObject arteMenu;
+    private GameObject portadaMenu;
+    private GameObject tarjetaMenu;
+    private Text instruccionesPortada;
     private GameObject panelMenu;
     private bool esperandoInicio = true;
     private bool pausa;
@@ -55,6 +58,9 @@ public class GameManager : MonoBehaviour
         textoMenu.text = esperandoInicio ? "El reactor está colapsando.\nRecupera los 5 núcleos y escapa en 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESC  ·  Pausa" : "La misión permanece suspendida.\n\nR  ·  Reiniciar misión";
         accionMenu.text = esperandoInicio ? "[ ENTER ]   INICIAR MISIÓN" : "[ ESC ]   CONTINUAR";
         arteMenu.SetActive(esperandoInicio);
+        bool usarPortada = esperandoInicio && portadaMenu != null;
+        tarjetaMenu.SetActive(!usarPortada);
+        if (portadaMenu != null) portadaMenu.SetActive(usarPortada);
         panelHud.SetActive(false);
         panelMenu.SetActive(true);
         Time.timeScale = 0f;
@@ -207,6 +213,7 @@ public class GameManager : MonoBehaviour
         panelMenu=menu.gameObject;
         menu.GetComponent<Image>().color=new Color(.035f,.02f,.015f,.97f);
         RectTransform tarjeta=Panel(menu,"Tarjeta",new Vector2(.08f,.10f),new Vector2(.92f,.90f),Vector2.zero,Vector2.zero);
+        tarjetaMenu=tarjeta.gameObject;
         tarjeta.GetComponent<Image>().color=new Color(.085f,.065f,.05f,1f);
         RectTransform franja=Panel(tarjeta,"Acento",new Vector2(0,1),new Vector2(1,1),new Vector2(0,-5),Vector2.zero);
         franja.GetComponent<Image>().color=new Color(1f,.28f,.04f);
@@ -225,7 +232,41 @@ public class GameManager : MonoBehaviour
         textoVida.fontStyle=FontStyle.Bold;
         textoNucleos.fontStyle=FontStyle.Bold;
         textoTiempo.fontStyle=FontStyle.Bold;
+        CrearPortada(menu);
         panelMenu.SetActive(false);
+    }
+
+    private void CrearPortada(RectTransform padre)
+    {
+        Texture2D textura=Resources.Load<Texture2D>("PortadaHellProtocol");
+        if(textura==null)
+        {
+            Debug.LogWarning("Portada opcional no encontrada en Assets/Resources/PortadaHellProtocol.png");
+            return;
+        }
+        RectTransform raiz=Panel(padre,"Portada HELL PROTOCOL",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
+        portadaMenu=raiz.gameObject;
+        raiz.GetComponent<Image>().color=new Color(.025f,.015f,.012f,1f);
+
+        GameObject imagen=new GameObject("Arte original",typeof(RectTransform),typeof(RawImage),typeof(AspectRatioFitter));
+        imagen.transform.SetParent(raiz,false);
+        RawImage raw=imagen.GetComponent<RawImage>();
+        raw.texture=textura;
+        raw.raycastTarget=false;
+        AspectRatioFitter ajuste=imagen.GetComponent<AspectRatioFitter>();
+        ajuste.aspectMode=AspectRatioFitter.AspectMode.FitInParent;
+        ajuste.aspectRatio=(float)textura.width/textura.height;
+
+        RectTransform info=Panel(imagen.transform,"Panel de misión",new Vector2(.43f,.065f),new Vector2(.96f,.37f),Vector2.zero,Vector2.zero);
+        info.GetComponent<Image>().color=new Color(.035f,.018f,.012f,.90f);
+        instruccionesPortada=TextoZona(info,"Objetivo y controles",new Vector2(.02f,.37f),new Vector2(.98f,.98f),22,new Color(1f,.92f,.8f));
+        instruccionesPortada.text="RECUPERA 5 NÚCLEOS  /  ESCAPA EN 120 SEGUNDOS\nWASD · Movimiento    MOUSE · Disparo    ESC · Pausa";
+        RectTransform iniciar=Panel(info,"Iniciar",new Vector2(.12f,.06f),new Vector2(.88f,.33f),Vector2.zero,Vector2.zero);
+        iniciar.GetComponent<Image>().color=new Color(.65f,.13f,.025f,1f);
+        Text tecla=Texto(iniciar,"Enter",30);
+        tecla.fontStyle=FontStyle.Bold;
+        tecla.text="[ ENTER ]  INICIAR MISIÓN";
+        portadaMenu.SetActive(false);
     }
 
     private Text TextoZona(Transform padre,string nombre,Vector2 min,Vector2 max,int tam,Color color)
