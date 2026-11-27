@@ -55,7 +55,7 @@ public class GameManager : MonoBehaviour
     {
         tituloMenu.text = esperandoInicio ? "HELL PROTOCOL" : "MISIÓN EN PAUSA";
         subtituloMenu.text = esperandoInicio ? "SECTOR 07  /  ALERTA CRÍTICA" : "PROTOCOLO SUSPENDIDO";
-        textoMenu.text = esperandoInicio ? "El reactor está colapsando.\nRecupera los 5 núcleos y escapa en 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESC  ·  Pausa" : "La misión permanece suspendida.\n\nR  ·  Reiniciar misión";
+        textoMenu.text = esperandoInicio ? "El reactor está colapsando.\nRecupera los 5 núcleos y escapa en 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESPACIO  ·  Dash    ESC  ·  Pausa" : "La misión permanece suspendida.\n\nR  ·  Reiniciar misión";
         accionMenu.text = esperandoInicio ? "[ ENTER ]   INICIAR MISIÓN" : "[ ESC ]   CONTINUAR";
         arteMenu.SetActive(esperandoInicio);
         bool usarPortada = esperandoInicio && portadaMenu != null;
@@ -138,7 +138,9 @@ public class GameManager : MonoBehaviour
         textoNucleos.text = "NÚCLEOS   " + jugador.nucleos + "/" + meta;
         textoTiempo.text = "TIEMPO   " + Mathf.CeilToInt(tiempo) + " s";
         textoTiempo.color = tiempo <= 20 ? new Color(1f,.3f,.2f) : Color.white;
-        hud.text = jugador.nucleos >= meta ? "SALIDA ACTIVADA  /  DIRÍGETE A LA ZONA VERDE" : "MISIÓN  /  RECUPERA LOS CINCO NÚCLEOS";
+        RobotController robot = jugador.GetComponent<RobotController>();
+        string dash = robot != null && robot.DashDisponible ? "DASH LISTO" : "DASH RECARGANDO";
+        hud.text = (jugador.nucleos >= meta ? "SALIDA ACTIVADA" : "RECUPERA LOS CINCO NÚCLEOS") + "  /  " + dash;
     }
 
     private void Finalizar(bool gano,string motivo)
@@ -260,7 +262,7 @@ public class GameManager : MonoBehaviour
         RectTransform info=Panel(imagen.transform,"Panel de misión",new Vector2(.43f,.065f),new Vector2(.96f,.37f),Vector2.zero,Vector2.zero);
         info.GetComponent<Image>().color=new Color(.035f,.018f,.012f,.90f);
         instruccionesPortada=TextoZona(info,"Objetivo y controles",new Vector2(.02f,.37f),new Vector2(.98f,.98f),22,new Color(1f,.92f,.8f));
-        instruccionesPortada.text="RECUPERA 5 NÚCLEOS  /  ESCAPA EN 120 SEGUNDOS\nWASD · Movimiento    MOUSE · Disparo    ESC · Pausa";
+        instruccionesPortada.text="RECUPERA 5 NÚCLEOS  /  ESCAPA EN 120 SEGUNDOS\nWASD · Movimiento    MOUSE · Disparo    ESPACIO · Dash    ESC · Pausa";
         RectTransform iniciar=Panel(info,"Iniciar",new Vector2(.12f,.06f),new Vector2(.88f,.33f),Vector2.zero,Vector2.zero);
         iniciar.GetComponent<Image>().color=new Color(.65f,.13f,.025f,1f);
         Text tecla=Texto(iniciar,"Enter",30);
