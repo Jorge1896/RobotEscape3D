@@ -14,6 +14,8 @@ public class GameManager : MonoBehaviour
     public bool terminado { get; private set; }
     private Text hud, mensaje, textoMenu, textoVida, textoNucleos, textoTiempo, tituloMenu;
     private GameObject panelHud;
+    private Text subtituloMenu, accionMenu;
+    private GameObject arteMenu;
     private GameObject panelMenu;
     private bool esperandoInicio = true;
     private bool pausa;
@@ -49,7 +51,10 @@ public class GameManager : MonoBehaviour
     private void MostrarMenu(string texto)
     {
         tituloMenu.text = esperandoInicio ? "HELL PROTOCOL" : "MISIÓN EN PAUSA";
-        textoMenu.text = esperandoInicio ? "PROTOCOLO DE EVACUACIÓN\n\nRecupera 5 núcleos y alcanza la salida.\nDispones de 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESC  ·  Pausa\n\n[ ENTER ]  INICIAR MISIÓN" : "[ ESC ]  CONTINUAR\n\n[ R ]  REINICIAR";
+        subtituloMenu.text = esperandoInicio ? "SECTOR 07  /  ALERTA CRÍTICA" : "PROTOCOLO SUSPENDIDO";
+        textoMenu.text = esperandoInicio ? "El reactor está colapsando.\nRecupera los 5 núcleos y escapa en 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESC  ·  Pausa" : "La misión permanece suspendida.\n\nR  ·  Reiniciar misión";
+        accionMenu.text = esperandoInicio ? "[ ENTER ]   INICIAR MISIÓN" : "[ ESC ]   CONTINUAR";
+        arteMenu.SetActive(esperandoInicio);
         panelHud.SetActive(false);
         panelMenu.SetActive(true);
         Time.timeScale = 0f;
@@ -201,22 +206,35 @@ public class GameManager : MonoBehaviour
         RectTransform menu=Panel(obj.transform,"Menu y pausa",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
         panelMenu=menu.gameObject;
         menu.GetComponent<Image>().color=new Color(.035f,.02f,.015f,.97f);
-        RectTransform tarjeta=Panel(menu,"Tarjeta",new Vector2(.12f,.16f),new Vector2(.88f,.84f),Vector2.zero,Vector2.zero);
-        tarjeta.GetComponent<Image>().color=new Color(.12f,.085f,.06f,1f);
+        RectTransform tarjeta=Panel(menu,"Tarjeta",new Vector2(.08f,.10f),new Vector2(.92f,.90f),Vector2.zero,Vector2.zero);
+        tarjeta.GetComponent<Image>().color=new Color(.085f,.065f,.05f,1f);
         RectTransform franja=Panel(tarjeta,"Acento",new Vector2(0,1),new Vector2(1,1),new Vector2(0,-5),Vector2.zero);
         franja.GetComponent<Image>().color=new Color(1f,.28f,.04f);
-        RectTransform cabecera=Panel(tarjeta,"Cabecera",new Vector2(0,.68f),Vector2.one,Vector2.zero,Vector2.zero);
-        cabecera.GetComponent<Image>().color=Color.clear;
-        tituloMenu=Texto(cabecera,"Titulo",48);
+        subtituloMenu=TextoZona(tarjeta,"Sector",new Vector2(.05f,.86f),new Vector2(.95f,.97f),19,new Color(1f,.65f,.28f));
+        tituloMenu=TextoZona(tarjeta,"Titulo",new Vector2(.04f,.61f),new Vector2(.96f,.86f),76,new Color(1f,.80f,.57f));
         tituloMenu.fontStyle=FontStyle.Bold;
+        RectTransform arte=Panel(tarjeta,"Emblema",new Vector2(.43f,.51f),new Vector2(.57f,.61f),Vector2.zero,Vector2.zero);
+        arte.GetComponent<Image>().color=new Color(.45f,.13f,.035f);
+        arteMenu=arte.gameObject;
+        Texto(arte,"Sigla",26).text="H / P";
+        textoMenu=TextoZona(tarjeta,"Instrucciones",new Vector2(.07f,.24f),new Vector2(.93f,.50f),23,new Color(.91f,.87f,.80f));
+        RectTransform inicio=Panel(tarjeta,"Accion",new Vector2(.23f,.07f),new Vector2(.77f,.21f),Vector2.zero,Vector2.zero);
+        inicio.GetComponent<Image>().color=new Color(.65f,.20f,.045f);
+        accionMenu=Texto(inicio,"Tecla",28);
+        accionMenu.fontStyle=FontStyle.Bold;
         textoVida.fontStyle=FontStyle.Bold;
         textoNucleos.fontStyle=FontStyle.Bold;
         textoTiempo.fontStyle=FontStyle.Bold;
-        tituloMenu.color=new Color(1f,.48f,.12f);
-        RectTransform cuerpo=Panel(tarjeta,"Cuerpo",Vector2.zero,new Vector2(1,.68f),Vector2.zero,Vector2.zero);
-        cuerpo.GetComponent<Image>().color=Color.clear;
-        textoMenu=Texto(cuerpo,"Instrucciones",24);
         panelMenu.SetActive(false);
+    }
+
+    private Text TextoZona(Transform padre,string nombre,Vector2 min,Vector2 max,int tam,Color color)
+    {
+        RectTransform zona=Panel(padre,nombre,min,max,Vector2.zero,Vector2.zero);
+        zona.GetComponent<Image>().color=Color.clear;
+        Text texto=Texto(zona,"Texto",tam);
+        texto.color=color;
+        return texto;
     }
 
     private Sprite CrearSpriteBarra()
