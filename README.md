@@ -48,6 +48,3 @@ La escena debe incluir los recursos generados y las referencias a los archivos d
 | Personaje | RobotController, RobotAnimation, CameraController |
 | Nivel | GameManager y ExitPortal: condiciones de victoria y derrota |
 | Efectos | VisualEffects: ParticleSystem |
-
-## Pruebas manuales
-Comprobar movimiento, bloqueo por muros, disparos y daño, recolección, portal bloqueado y activado, victoria, derrota por tiempo y por vida, reinicio, pausa, música, dash y baterías. Las pruebas de desarrollo fueron realizadas en el editor; verificar también una compilación de Windows antes de entregar.
