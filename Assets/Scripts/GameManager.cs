@@ -13,6 +13,8 @@ public class GameManager : MonoBehaviour
     public int meta = 5;
     public bool terminado { get; private set; }
     private Text hud, mensaje;
+    private Renderer indicadorSalida;
+    private MaterialPropertyBlock propiedadesSalida;
     private AudioSource audioSource;
     private int vidaAnterior, nucleosAnteriores;
     private AudioClip disparo, recogida, danio, victoria, derrota;
@@ -30,6 +32,8 @@ public class GameManager : MonoBehaviour
         victoria = CrearTono(880f,.65f);
         derrota = CrearTono(90f,.65f);
         CrearCanvas();
+        indicadorSalida = salida.GetComponent<Renderer>();
+        propiedadesSalida = new MaterialPropertyBlock();
         vidaAnterior = jugador.vida;
         nucleosAnteriores = jugador.nucleos;
         Actualizar();
@@ -60,6 +64,13 @@ public class GameManager : MonoBehaviour
 
     private void Actualizar()
     {
+        if (indicadorSalida != null)
+        {
+            Color color = jugador.nucleos >= meta ? new Color(.08f,1f,.35f) : new Color(.65f,.12f,.08f);
+            indicadorSalida.GetPropertyBlock(propiedadesSalida);
+            propiedadesSalida.SetColor("_BaseColor", color);
+            indicadorSalida.SetPropertyBlock(propiedadesSalida);
+        }
         hud.text = "VIDA  "+jugador.vida+"/100     |     NUCLEOS  "+jugador.nucleos+"/"+meta+
             "     |     TIEMPO  "+Mathf.CeilToInt(tiempo)+" s\n"+
             (jugador.nucleos>=meta ? "SALIDA ACTIVADA - Dirigete a la zona verde" : "Recupera los cinco nucleos y llega a la salida");
