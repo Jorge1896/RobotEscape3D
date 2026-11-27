@@ -6,6 +6,14 @@ public class RobotController : MonoBehaviour
 {
     [Header("Movimiento")]
     public float velocidad = 6f;
+    [Header("Dash")]
+    public float multiplicadorMovimiento = 1.25f;
+    public float velocidadDash = 17f;
+    public float duracionDash = .16f;
+    public float recargaDash = 1.25f;
+    private float finDash, proximoDash;
+    private Vector3 direccionDash;
+    public bool DashDisponible => Time.time >= proximoDash;
     public Transform modelo;
     private Rigidbody rb;
     private Vector3 movimiento;
@@ -17,6 +25,11 @@ public class RobotController : MonoBehaviour
 
     private void Update()
     {
+        if (GameManager.instancia != null && !GameManager.instancia.EnJuego)
+        {
+            movimiento = Vector3.zero;
+            return;
+        }
         Keyboard teclado = Keyboard.current;
         movimiento = Vector3.zero;
         if (teclado == null) return;
@@ -25,6 +38,14 @@ public class RobotController : MonoBehaviour
         if (teclado.dKey.isPressed) movimiento.x += 1;
         if (teclado.aKey.isPressed) movimiento.x -= 1;
         movimiento = movimiento.normalized;
+        if (teclado.spaceKey.wasPressedThisFrame && DashDisponible)
+        {
+            direccionDash = movimiento.sqrMagnitude > .01f ? movimiento : (modelo != null ? modelo.forward : transform.forward);
+            direccionDash.y = 0;
+            direccionDash.Normalize();
+            finDash = Time.time + duracionDash;
+            proximoDash = Time.time + recargaDash;
+        }
         if (modelo != null && movimiento.sqrMagnitude > 0.01f)
             modelo.rotation = Quaternion.RotateTowards(modelo.rotation,
                 Quaternion.LookRotation(movimiento), 720f * Time.deltaTime);
@@ -33,7 +54,7 @@ public class RobotController : MonoBehaviour
     private void FixedUpdate()
     {
         Vector3 velocidadActual = rb.linearVelocity;
-        rb.linearVelocity = new Vector3(movimiento.x * velocidad,
-            velocidadActual.y, movimiento.z * velocidad);
+        Vector3 avance = Time.time < finDash ? direccionDash * velocidadDash : movimiento * velocidad * multiplicadorMovimiento;
+        rb.linearVelocity = new Vector3(avance.x, velocidadActual.y, avance.z);
     }
 }
