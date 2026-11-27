@@ -122,7 +122,7 @@ public class GameManager : MonoBehaviour
             indicadorSalida.SetPropertyBlock(propiedadesSalida);
         }
         barraVida.fillAmount = Mathf.Clamp01(jugador.vida / 100f);
-        barraVida.color = jugador.vida <= 40 ? new Color(1f,.25f,.18f) : new Color(.12f,.85f,.65f);
+        barraVida.color = jugador.vida <= 40 ? new Color(1f,.25f,.18f) : new Color(.65f,.85f,.20f);
         textoVida.text = "ENERGÍA   " + jugador.vida + "/100";
         textoNucleos.text = "NÚCLEOS   " + jugador.nucleos + "/" + meta;
         textoTiempo.text = "TIEMPO   " + Mathf.CeilToInt(tiempo) + " s";
@@ -181,7 +181,7 @@ public class GameManager : MonoBehaviour
         textoNucleos.color=new Color(1f,.8f,.25f);
         textoTiempo=Texto(reloj,"Reloj",24);
         RectTransform fondoBarra=Panel(energia,"Fondo vida",new Vector2(0,0),new Vector2(1,0),new Vector2(12,8),new Vector2(-12,15));
-        fondoBarra.GetComponent<Image>().color=new Color(.15f,.2f,.25f,1f);
+        fondoBarra.GetComponent<Image>().color=new Color(.22f,.16f,.11f,1f);
         RectTransform relleno=Panel(fondoBarra,"Barra vida",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
         barraVida=relleno.GetComponent<Image>();
         barraVida.sprite=CrearSpriteBarra();
@@ -189,21 +189,30 @@ public class GameManager : MonoBehaviour
         barraVida.fillMethod=Image.FillMethod.Horizontal;
         RectTransform objetivo=Panel(raiz,"Objetivo",new Vector2(.18f,0),new Vector2(.82f,0),new Vector2(0,16),new Vector2(0,56));
         hud=Texto(objetivo,"Mision",18);
+        hud.color=new Color(1f,.72f,.36f);
+        foreach (RectTransform bloque in new[]{energia,nucleos,reloj})
+        {
+            RectTransform acento=Panel(bloque,"Franja industrial",new Vector2(0,1),Vector2.one,new Vector2(0,-3),Vector2.zero);
+            acento.GetComponent<Image>().color=new Color(.85f,.27f,.06f);
+        }
         RectTransform final=Panel(obj.transform,"Resultado",new Vector2(0,0),new Vector2(1,1),Vector2.zero,Vector2.zero);
         mensaje=Texto(final,"Mensaje",36);
         final.gameObject.SetActive(false);
         RectTransform menu=Panel(obj.transform,"Menu y pausa",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
         panelMenu=menu.gameObject;
-        menu.GetComponent<Image>().color=new Color(.025f,.04f,.07f,.97f);
+        menu.GetComponent<Image>().color=new Color(.035f,.02f,.015f,.97f);
         RectTransform tarjeta=Panel(menu,"Tarjeta",new Vector2(.12f,.16f),new Vector2(.88f,.84f),Vector2.zero,Vector2.zero);
-        tarjeta.GetComponent<Image>().color=new Color(.055f,.10f,.15f,1f);
+        tarjeta.GetComponent<Image>().color=new Color(.12f,.085f,.06f,1f);
         RectTransform franja=Panel(tarjeta,"Acento",new Vector2(0,1),new Vector2(1,1),new Vector2(0,-5),Vector2.zero);
-        franja.GetComponent<Image>().color=new Color(.1f,.85f,1f);
+        franja.GetComponent<Image>().color=new Color(1f,.28f,.04f);
         RectTransform cabecera=Panel(tarjeta,"Cabecera",new Vector2(0,.68f),Vector2.one,Vector2.zero,Vector2.zero);
         cabecera.GetComponent<Image>().color=Color.clear;
         tituloMenu=Texto(cabecera,"Titulo",48);
         tituloMenu.fontStyle=FontStyle.Bold;
-        tituloMenu.color=new Color(.25f,.9f,1f);
+        textoVida.fontStyle=FontStyle.Bold;
+        textoNucleos.fontStyle=FontStyle.Bold;
+        textoTiempo.fontStyle=FontStyle.Bold;
+        tituloMenu.color=new Color(1f,.48f,.12f);
         RectTransform cuerpo=Panel(tarjeta,"Cuerpo",Vector2.zero,new Vector2(1,.68f),Vector2.zero,Vector2.zero);
         cuerpo.GetComponent<Image>().color=Color.clear;
         textoMenu=Texto(cuerpo,"Instrucciones",24);
@@ -230,7 +239,7 @@ public class GameManager : MonoBehaviour
         obj.transform.SetParent(padre,false);
         RectTransform rect=obj.GetComponent<RectTransform>();
         rect.anchorMin=min; rect.anchorMax=max; rect.offsetMin=offsetMin; rect.offsetMax=offsetMax;
-        obj.GetComponent<Image>().color=new Color(.035f,.06f,.10f,.92f);
+        obj.GetComponent<Image>().color=new Color(.075f,.06f,.045f,.96f);
         return rect;
     }
 
