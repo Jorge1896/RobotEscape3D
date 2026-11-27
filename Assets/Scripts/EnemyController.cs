@@ -28,7 +28,16 @@ public class EnemyController : MonoBehaviour
     }
     public void RecibirDanio(int cantidad)
     {
+        if (vida <= 0) return;
         vida -= cantidad;
-        if (vida <= 0) Destroy(gameObject);
+        if (vida <= 0)
+        {
+            VisualEffects.Explosion(transform.position + Vector3.up, new Color(1f,.25f,.06f), 38);
+            Destroy(gameObject);
+        }
+        else
+        {
+            VisualEffects.Explosion(transform.position + Vector3.up, Color.red, 10);
+        }
     }
 }
