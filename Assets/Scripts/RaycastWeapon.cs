@@ -36,9 +36,14 @@ public class RaycastWeapon : MonoBehaviour
             EnemyController enemigo = impacto.collider.GetComponentInParent<EnemyController>();
             if (enemigo != null) enemigo.RecibirDanio(danio);
         }
-        proximoDisparo = Time.time + recarga;
+        proximoDisparo = Time.time + Mathf.Max(recarga, .25f);
+        GameManager.instancia?.Sonido(720f, .10f);
         if (laser != null)
         {
+            laser.startWidth = .14f;
+            laser.endWidth = .09f;
+            laser.startColor = Color.cyan;
+            laser.endColor = Color.white;
             laser.SetPosition(0, origen);
             laser.SetPosition(1, destino);
             StartCoroutine(MostrarLaser());
@@ -47,7 +52,7 @@ public class RaycastWeapon : MonoBehaviour
     private IEnumerator MostrarLaser()
     {
         laser.enabled = true;
-        yield return new WaitForSeconds(.08f);
+        yield return new WaitForSeconds(.22f);
         laser.enabled = false;
     }
 }
