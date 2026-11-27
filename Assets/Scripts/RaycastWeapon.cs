@@ -39,6 +39,7 @@ public class RaycastWeapon : MonoBehaviour
         }
         proximoDisparo = Time.time + Mathf.Max(recarga, .25f);
         GameManager.instancia?.Sonido(720f, .10f);
+        camara.GetComponent<CameraController>()?.Sacudir(.045f,.10f);
         if (laser != null)
         {
             laser.startWidth = .14f;
