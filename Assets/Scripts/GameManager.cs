@@ -12,7 +12,8 @@ public class GameManager : MonoBehaviour
     public float tiempo = 120f;
     public int meta = 5;
     public bool terminado { get; private set; }
-    private Text hud, mensaje, textoMenu;
+    private Text hud, mensaje, textoMenu, textoVida, textoNucleos, textoTiempo, tituloMenu;
+    private GameObject panelHud;
     private GameObject panelMenu;
     private bool esperandoInicio = true;
     private bool pausa;
@@ -47,7 +48,9 @@ public class GameManager : MonoBehaviour
 
     private void MostrarMenu(string texto)
     {
-        textoMenu.text = texto;
+        tituloMenu.text = esperandoInicio ? "ROBOT ESCAPE 3D" : "MISIÓN EN PAUSA";
+        textoMenu.text = esperandoInicio ? "PROTOCOLO DE EVACUACIÓN\n\nRecupera 5 núcleos y alcanza la salida.\nDispones de 120 segundos.\n\nWASD  ·  Movimiento     MOUSE  ·  Disparo\nESC  ·  Pausa\n\n[ ENTER ]  INICIAR MISIÓN" : "[ ESC ]  CONTINUAR\n\n[ R ]  REINICIAR";
+        panelHud.SetActive(false);
         panelMenu.SetActive(true);
         Time.timeScale = 0f;
     }
@@ -57,6 +60,7 @@ public class GameManager : MonoBehaviour
         esperandoInicio = false;
         pausa = false;
         panelMenu.SetActive(false);
+        panelHud.SetActive(true);
         Time.timeScale = 1f;
     }
 
@@ -119,14 +123,18 @@ public class GameManager : MonoBehaviour
         }
         barraVida.fillAmount = Mathf.Clamp01(jugador.vida / 100f);
         barraVida.color = jugador.vida <= 40 ? new Color(1f,.25f,.18f) : new Color(.12f,.85f,.65f);
-        hud.text = "VIDA  "+jugador.vida+"/100     |     NUCLEOS  "+jugador.nucleos+"/"+meta+
-            "     |     TIEMPO  "+Mathf.CeilToInt(tiempo)+" s\n"+
-            (jugador.nucleos>=meta ? "SALIDA ACTIVADA - Dirigete a la zona verde" : "Recupera los cinco nucleos y llega a la salida");
+        textoVida.text = "ENERGÍA   " + jugador.vida + "/100";
+        textoNucleos.text = "NÚCLEOS   " + jugador.nucleos + "/" + meta;
+        textoTiempo.text = "TIEMPO   " + Mathf.CeilToInt(tiempo) + " s";
+        textoTiempo.color = tiempo <= 20 ? new Color(1f,.3f,.2f) : Color.white;
+        hud.text = jugador.nucleos >= meta ? "SALIDA ACTIVADA  /  DIRÍGETE A LA ZONA VERDE" : "MISIÓN  /  RECUPERA LOS CINCO NÚCLEOS";
     }
 
     private void Finalizar(bool gano,string motivo)
     {
         terminado = true;
+        panelHud.SetActive(false);
+        mensaje.color = gano ? new Color(.3f,1f,.7f) : new Color(1f,.45f,.35f);
         mensaje.transform.parent.gameObject.SetActive(true);
         mensaje.text = (gano ? "VICTORIA" : "DERROTA")+"\n\n"+motivo+"\n\nPresiona R para reiniciar";
         audioSource.PlayOneShot(gano?victoria:derrota,.7f);
@@ -161,22 +169,44 @@ public class GameManager : MonoBehaviour
         CanvasScaler scaler=obj.GetComponent<CanvasScaler>();
         scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;
         scaler.referenceResolution=new Vector2(1280,720);
-        RectTransform panel=Panel(obj.transform,"HUD",new Vector2(0,1),new Vector2(1,1),new Vector2(0,-90),Vector2.zero);
-        hud=Texto(panel,"Indicadores",24);
-        hud.rectTransform.offsetMin = new Vector2(12,18);
-        RectTransform fondoBarra=Panel(panel,"Fondo vida",new Vector2(.06f,0),new Vector2(.94f,0),new Vector2(0,5),new Vector2(0,12));
+        RectTransform raiz=Panel(obj.transform,"HUD",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
+        panelHud=raiz.gameObject;
+        raiz.GetComponent<Image>().color=Color.clear;
+        RectTransform energia=Panel(raiz,"Energia",new Vector2(0,1),new Vector2(.30f,1),new Vector2(16,-78),new Vector2(-8,-16));
+        RectTransform nucleos=Panel(raiz,"Nucleos",new Vector2(.30f,1),new Vector2(.70f,1),new Vector2(8,-78),new Vector2(-8,-16));
+        RectTransform reloj=Panel(raiz,"Tiempo",new Vector2(.70f,1),new Vector2(1,1),new Vector2(8,-78),new Vector2(-16,-16));
+        textoVida=Texto(energia,"Vida",23);
+        textoVida.rectTransform.offsetMin=new Vector2(8,15);
+        textoNucleos=Texto(nucleos,"Cantidad",24);
+        textoNucleos.color=new Color(1f,.8f,.25f);
+        textoTiempo=Texto(reloj,"Reloj",24);
+        RectTransform fondoBarra=Panel(energia,"Fondo vida",new Vector2(0,0),new Vector2(1,0),new Vector2(12,8),new Vector2(-12,15));
         fondoBarra.GetComponent<Image>().color=new Color(.15f,.2f,.25f,1f);
         RectTransform relleno=Panel(fondoBarra,"Barra vida",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
         barraVida=relleno.GetComponent<Image>();
         barraVida.sprite=CrearSpriteBarra();
         barraVida.type=Image.Type.Filled;
         barraVida.fillMethod=Image.FillMethod.Horizontal;
+        RectTransform objetivo=Panel(raiz,"Objetivo",new Vector2(.18f,0),new Vector2(.82f,0),new Vector2(0,16),new Vector2(0,56));
+        hud=Texto(objetivo,"Mision",18);
         RectTransform final=Panel(obj.transform,"Resultado",new Vector2(0,0),new Vector2(1,1),Vector2.zero,Vector2.zero);
         mensaje=Texto(final,"Mensaje",36);
         final.gameObject.SetActive(false);
         RectTransform menu=Panel(obj.transform,"Menu y pausa",Vector2.zero,Vector2.one,Vector2.zero,Vector2.zero);
         panelMenu=menu.gameObject;
-        textoMenu=Texto(menu,"Instrucciones",30);
+        menu.GetComponent<Image>().color=new Color(.025f,.04f,.07f,.97f);
+        RectTransform tarjeta=Panel(menu,"Tarjeta",new Vector2(.12f,.16f),new Vector2(.88f,.84f),Vector2.zero,Vector2.zero);
+        tarjeta.GetComponent<Image>().color=new Color(.055f,.10f,.15f,1f);
+        RectTransform franja=Panel(tarjeta,"Acento",new Vector2(0,1),new Vector2(1,1),new Vector2(0,-5),Vector2.zero);
+        franja.GetComponent<Image>().color=new Color(.1f,.85f,1f);
+        RectTransform cabecera=Panel(tarjeta,"Cabecera",new Vector2(0,.68f),Vector2.one,Vector2.zero,Vector2.zero);
+        cabecera.GetComponent<Image>().color=Color.clear;
+        tituloMenu=Texto(cabecera,"Titulo",48);
+        tituloMenu.fontStyle=FontStyle.Bold;
+        tituloMenu.color=new Color(.25f,.9f,1f);
+        RectTransform cuerpo=Panel(tarjeta,"Cuerpo",Vector2.zero,new Vector2(1,.68f),Vector2.zero,Vector2.zero);
+        cuerpo.GetComponent<Image>().color=Color.clear;
+        textoMenu=Texto(cuerpo,"Instrucciones",24);
         panelMenu.SetActive(false);
     }
 
@@ -213,6 +243,9 @@ public class GameManager : MonoBehaviour
         rect.offsetMin=new Vector2(12,4); rect.offsetMax=new Vector2(-12,-4);
         Text texto=obj.GetComponent<Text>();
         texto.font=Resources.GetBuiltinResource<Font>("LegacyRuntime.ttf");
+        texto.resizeTextForBestFit=true;
+        texto.resizeTextMinSize=12;
+        texto.resizeTextMaxSize=tam;
         texto.fontSize=tam; texto.alignment=TextAnchor.MiddleCenter; texto.color=Color.white;
         return texto;
     }
