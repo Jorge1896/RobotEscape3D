@@ -14,12 +14,13 @@ public class EnemyController : MonoBehaviour
         if (objetivo == null) return;
         Vector3 delta = objetivo.position - transform.position;
         delta.y = 0;
-        Vector3 movimiento = delta.magnitude < alcance && delta.magnitude > 1f
+        Vector3 movimiento = delta.magnitude < alcance && delta.magnitude > .55f
             ? delta.normalized * velocidad : Vector3.zero;
         rb.linearVelocity = new Vector3(movimiento.x, rb.linearVelocity.y, movimiento.z);
         if (movimiento.sqrMagnitude > .01f)
             rb.MoveRotation(Quaternion.LookRotation(movimiento));
     }
+    private void OnCollisionEnter(Collision collision) { OnCollisionStay(collision); }
     private void OnCollisionStay(Collision collision)
     {
         PlayerHealth jugador = collision.gameObject.GetComponent<PlayerHealth>();
